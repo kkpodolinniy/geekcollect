@@ -13,7 +13,6 @@ const StyledUploadFileLabel = styled.label`
 `;
 
 function UploadFileButton(props) {
-  console.log(props);
   return (
     <ComponentsWrapper width={"200"}>
       <StyledUploadFileButton

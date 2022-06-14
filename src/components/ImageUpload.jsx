@@ -14,7 +14,6 @@ export const ImageUpload = () => {
 
   useEffect(() => {
     if (!selectedFile) {
-      console.log(selectedFile);
       setPreview(undefined);
       return;
     }

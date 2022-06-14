@@ -18,8 +18,10 @@ const StyledTextArea = styled.textarea`
   }
 `;
 
-function TextArea() {
-  return <StyledTextArea />;
+function TextArea(props) {
+  return (
+    <StyledTextArea onChange={(e) => props.changeDescription(e.target.value)} />
+  );
 }
 
 export default TextArea;
