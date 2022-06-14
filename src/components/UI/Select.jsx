@@ -12,12 +12,24 @@ const StyledSelect = styled.select`
 `;
 
 function Select(props) {
+  const options = [
+    { id: 1, key: "favorites", value: "My favorites" },
+    { id: 2, key: "rare", value: "Rare Stuff" },
+    { id: 3, key: "ponies", value: "Cute Ponies" },
+    { id: 4, key: "board", value: "Board games" },
+  ];
   return (
-    <StyledSelect {...props} id="select-collection" name="select">
-      <option value="value1">My favorites</option>
-      <option value="value2">Rare Stuff</option>
-      <option value="value3">Cute Ponies</option>
-      <option value="value3">Board games</option>
+    <StyledSelect
+      {...props}
+      onChange={(e) => props.select(e.target.value)}
+      id="select-collection"
+      name="select"
+    >
+      {options.map((option) => (
+        <option key={option.id} value={option.key}>
+          {option.value}
+        </option>
+      ))}
     </StyledSelect>
   );
 }

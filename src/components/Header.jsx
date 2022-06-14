@@ -8,13 +8,13 @@ const StyledHeader = styled.div`
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  border-bottom: 2px solid #ccc;
+  background: #f0af2d;
 
   & a {
     text-decoration: none;
     font-family: "Karla", sans-serif;
-    font-size: 18px;
-    color: black;
+    font-size: 20px;
+    color: white;
   }
 `;
 

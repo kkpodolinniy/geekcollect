@@ -1,7 +1,6 @@
-import React from "react";
 import styled, { css } from "styled-components";
 
-const StyledButton = styled.button`
+export const StyledButton = styled.button`
   padding: 10px 37px;
   border-radius: 4px;
   font-size: 1em;
@@ -43,9 +42,3 @@ const StyledButton = styled.button`
       border: ${(props) => (props.outlined ? "1px solid #ea4f30" : "none")};
     `}
 `;
-
-function Button(props) {
-  return <StyledButton {...props}></StyledButton>;
-}
-
-export default Button;
