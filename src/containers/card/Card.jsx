@@ -1,24 +1,54 @@
 import React from "react";
+import { Link } from "react-router-dom";
+
 import {
   CardWrapper,
   CardImage,
   CardDescription,
+  CardDescriptionWrapper,
   CardInfoWrapper,
   CardPrice,
   MainCardInfo,
   CardTitle,
+  IconBar,
+  CollectionName,
 } from "./styled";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import { useDispatch } from "react-redux";
+import { deleteCollectionItem } from "../../store/ItemsCollection/actions";
 
-function Card({ price, title, description, collection }) {
+function Card({ edited, id, price, title, description, collection }) {
+  const dispatch = useDispatch();
+
+  function deleteItem() {
+    dispatch(deleteCollectionItem({ id }));
+  }
   return (
     <CardWrapper>
-      <CardImage />
+      {!edited && (
+        <IconBar>
+          <Link to={`/item/change/${id}`}>
+            <ModeEditIcon sx={{ fontSize: 25 }} />
+          </Link>
+          <DeleteForeverIcon
+            onClick={deleteItem}
+            sx={{ fontSize: 25, color: "white", cursor: "pointer" }}
+          />
+        </IconBar>
+      )}
+      <CardImage edited={edited}></CardImage>
+
       <CardInfoWrapper>
         <MainCardInfo>
           <CardTitle>{title}</CardTitle>
-          <CardPrice>{price ? price : "Not For Sale"}</CardPrice>
+          <CardPrice>{price ? `$${price}` : "Not For Sale"}</CardPrice>
         </MainCardInfo>
-        <CardDescription>{description}</CardDescription>
+        <CollectionName>Collection: {collection}</CollectionName>
+
+        <CardDescriptionWrapper>
+          <CardDescription>{description}</CardDescription>
+        </CardDescriptionWrapper>
       </CardInfoWrapper>
     </CardWrapper>
   );

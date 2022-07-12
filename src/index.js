@@ -1,22 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import { Provider } from "react-redux";
-import store from "./store";
+import store, { persistor } from "./store";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
-import ThemeContext from "./context/context";
+import Theme from "./Theme";
+import { PersistGate } from "redux-persist/integration/react";
 
 function Main() {
-  const [theme, setTheme] = useState("light");
-
   return (
     <BrowserRouter>
-      <ThemeContext.Provider value={{ theme, setTheme }}>
-        <Provider store={store}>
-          <App />
-        </Provider>
-      </ThemeContext.Provider>
+      <Provider store={store}>
+        <Theme>
+          <PersistGate loading={null} persistor={persistor}>
+            <App />
+          </PersistGate>
+        </Theme>
+      </Provider>
     </BrowserRouter>
   );
 }

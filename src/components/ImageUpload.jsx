@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import Flex from "./UI/Flex";
-import UploadFileButton from "./UI/UploadFileButton";
+import Flex from "./Flex";
+import UploadFileButton from "./UploadFileButton";
 
 const PreviewImage = styled.img`
   height: 200px;

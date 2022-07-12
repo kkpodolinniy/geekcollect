@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const StyledRoot = styled.div`
   width: 100%;
-  height: 100%;
+  min-height: calc(100% - 90px);
   background-color: #e5e5f7;
   opacity: 1;
   background-color: #e5e5f7;
@@ -11,7 +11,7 @@ const StyledRoot = styled.div`
   padding-top: 20px;
   background-image: linear-gradient(
       30deg,
-      #1eb972 12%,
+      ${(props) => props.theme.colors.success} 12%,
       transparent 12.5%,
       transparent 87%,
       #1eb972 87.5%,
@@ -65,14 +65,13 @@ const ContentWrapper = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   background-color: #eeeeee;
-  height: inherit;
   border-radius: 4px;
-  padding: 15px 15px 0 15px;
-  border-left: 6px solid #f0af2d;
-  border-right: 6px solid #f0af2d;
+  padding: 15px 15px 15px 15px;
+  border-left: 6px solid ${(props) => props.theme.colors.warning};
+  border-right: 6px solid ${(props) => props.theme.colors.warning};
 `;
 
-function RootContainer({ children }) {
+function RootContainer({ children }, props) {
   return (
     <StyledRoot>
       <ContentWrapper>{children}</ContentWrapper>
