@@ -5,7 +5,7 @@ function PriceInput({ onChange, value }) {
   return (
     <StyledPriceInput
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={onChange}
       placeholder="Price"
     ></StyledPriceInput>
   );

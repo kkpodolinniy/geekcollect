@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,15 +16,18 @@ function ChangeItem() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  dispatch(setSelectedItemIdAction(id));
+  // dispatch(setSelectedItemIdAction(id));
   const selectedItem = useSelector(selectedItemInfoSelector); //TODO change name - "initial item info"
   const itemCollection = useSelector((state) =>
-    collectionDetailSelector(state, selectedItem.collection)
+    collectionDetailSelector(
+      state,
+      selectedItem.collection ? selectedItem.collection : ""
+    )
   );
 
-  // useEffect(() => {
-  //   dispatch(setSelectedItemIdAction(id));
-  // }, [id, dispatch]);
+  useEffect(() => {
+    dispatch(setSelectedItemIdAction(id));
+  }, [id, dispatch]);
   const changeItem = (collectionItem, selectedOptionValue) => {
     dispatch(changeCollectionItem(collectionItem));
     dispatch(addCollectionAction(selectedOptionValue));
@@ -32,13 +35,17 @@ function ChangeItem() {
   };
   return (
     <>
-      <HandleItemInfo
-        selectedItem={selectedItem}
-        itemCollection={itemCollection}
-        pageTitle={"Edit Your Collection Item"}
-        onSubmit={changeItem}
-        buttonText={"Change"}
-      />
+      {id ? (
+        <HandleItemInfo
+          selectedItem={selectedItem}
+          itemCollection={itemCollection}
+          pageTitle={"Edit Your Collection Item"}
+          onSubmit={changeItem}
+          buttonText={"Change"}
+        />
+      ) : (
+        <p>Wait, data is loading...</p>
+      )}
     </>
   );
 }

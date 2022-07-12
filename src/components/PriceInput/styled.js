@@ -1,8 +1,7 @@
 import styled from "styled-components";
-import { CustomInput } from "../Input/styled";
 import Input from "../Input/Input";
 
-export const StyledPriceInput = styled(CustomInput).attrs({
+export const StyledPriceInput = styled(Input).attrs({
   type: "number",
   min: "0",
 })`
