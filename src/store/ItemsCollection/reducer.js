@@ -4,7 +4,7 @@ export const fetchItems = createAsyncThunk(
   async function (_, { rejectWithValue }) {
     try {
       const response = await fetch(
-        "https://62ce69c0066bd2b699345820.mockapi.io/api/v1/item"
+        "https://62ce69c0066bd2b699345820.mockapi.io/api/v1/items"
       );
       if (!response.ok) {
         throw new Error("Server Error");
@@ -24,7 +24,7 @@ export const deleteItem = createAsyncThunk(
   async function ({ id }, { rejectWithValue, dispatch }) {
     try {
       const response = await fetch(
-        `https://62ce69c0066bd2b699345820.mockapi.io/api/v1/item/${id}`,
+        `https://62ce69c0066bd2b699345820.mockapi.io/api/v1/items/${id}`,
         { method: "DELETE" }
       );
       if (!response.ok) {
@@ -42,7 +42,7 @@ export const changeItem = createAsyncThunk(
   async function (item, { rejectWithValue, dispatch }) {
     try {
       const response = await fetch(
-        `https://62ce69c0066bd2b699345820.mockapi.io/api/v1/item/${item.id}`,
+        `https://62ce69c0066bd2b699345820.mockapi.io/api/v1/items/${item.id}`,
         {
           method: "PUT",
           body: JSON.stringify(item),
@@ -67,7 +67,7 @@ export const addNewItem = createAsyncThunk(
   async function (item, { dispatch, rejectWithValue }) {
     try {
       const response = await fetch(
-        "https://62ce69c0066bd2b699345820.mockapi.io/api/v1/item",
+        "https://62ce69c0066bd2b699345820.mockapi.io/api/v1/items",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
