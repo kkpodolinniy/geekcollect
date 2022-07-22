@@ -78,7 +78,6 @@ export const addNewItem = createAsyncThunk(
         throw new Error("Server Error");
       }
       const data = await response.json();
-      console.log(data);
 
       dispatch(addCollectionItem(data));
     } catch (error) {

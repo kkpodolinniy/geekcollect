@@ -14,31 +14,44 @@ import {
   CollectionItemStatusSelector,
   CollectionItemErrorSelector,
 } from "../../store/ItemsCollection/selectors";
+import { allCollectionsSelector } from "../../store/Collections/selectors";
 import { fetchItems } from "../../store/ItemsCollection/reducer";
+import { fetchCollections } from "../../store/Collections/reducer";
+import Loader from "../../components/Loader";
 
 function Collection() {
-  const collectionFetchStatus = useSelector(CollectionItemStatusSelector);
-  const collectionFetchError = useSelector(CollectionItemErrorSelector);
+  const collectionItemFetchStatus = useSelector(CollectionItemStatusSelector);
+  const allCollections = useSelector(allCollectionsSelector);
+  const collectionItemFetchError = useSelector(CollectionItemErrorSelector);
   const collectionItems = useSelector(collectionSelector);
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(fetchItems());
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchCollections());
+  }, [dispatch]);
+
+  function getCollectionInfo(id) {
+    const searchedCollection = allCollections.find(
+      (collection) => Number(collection.id) === id
+    );
+    return searchedCollection.label;
+  }
   return (
     <CollectionContainer>
-      {collectionFetchStatus === "loading" && (
-        <PageTitle>Items is loading, please wait</PageTitle>
+      {collectionItemFetchStatus === "loading" && <Loader />}
+      {collectionItemFetchError && (
+        <PageTitle>An error occured: {collectionItemFetchError}</PageTitle>
       )}
-      {collectionFetchError && (
-        <PageTitle>An error occured: {collectionFetchError}</PageTitle>
-      )}
-      {collectionItems && collectionItems.length ? (
+      {allCollections.length && collectionItems && collectionItems.length ? (
         collectionItems.map((item) => {
-          console.log(item);
           return (
             <Card
               price={item.price}
-              collection={item.collection}
+              collection={getCollectionInfo(item.collection)}
               key={item.id}
               id={item.id}
               title={item.title}

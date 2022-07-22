@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Card from "../../containers/Card";
 import Input from "../../components/Input/Input";
 import TextArea from "../../components/TextArea/TextArea";
@@ -10,28 +10,31 @@ import PageTitle from "../../components/PageTitle";
 import Button from "../../components/Button";
 import Flex from "../../components/Flex";
 import { allCollectionsSelector } from "../../store/Collections/selectors";
+import Loader from "../../components/Loader";
+
+const initialCollectionItem = {
+  price: 0,
+  title: "",
+  collection: "",
+  description: "",
+  photo: "https://picsum.photos/200/300",
+};
 
 function HandleItemInfo({
-  itemCollection,
-  selectedItem,
+  selectedItem = initialCollectionItem,
   pageTitle,
   buttonText,
   onSubmit,
 }) {
-  const initialCollectionItem = {
-    price: null,
-    title: "",
-    collection: null,
-    description: "",
-    photo: "https://picsum.photos/200/300",
-  };
-  const [collectionItem, setCollectionItem] = useState(
-    selectedItem ? selectedItem : initialCollectionItem
-  );
+  const [collectionItem, setCollectionItem] = useState(selectedItem);
   const activityFlag = useRef(false);
   const inputTitle = useRef(null);
   const collections = useSelector(allCollectionsSelector);
-  const [selectedOptionValue, setSelectedOptionValue] = useState(null);
+  const [selectedOptionValue, setSelectedOptionValue] = useState(
+    collections.find((collection) => {
+      return Number(collection.id) === collectionItem.collection;
+    })
+  );
   const changeActivityFlag = () => {
     activityFlag.current = true;
   };
@@ -60,7 +63,7 @@ function HandleItemInfo({
   }
   function changeCollection(value) {
     changeActivityFlag();
-    setCollectionItem({ ...collectionItem, collection: value.label });
+    setCollectionItem({ ...collectionItem, collection: Number(value.id) });
     setSelectedOptionValue(value);
   }
   function changeItemPrice(value) {
@@ -70,46 +73,52 @@ function HandleItemInfo({
 
   return (
     <>
-      <PageTitle>{pageTitle}</PageTitle>
-      <Flex>
-        <Flex direction={"column"} justify={"center"} align="center">
-          <Card edited={true} {...collectionItem} />
-        </Flex>
-        <Flex direction={"column"} justify={"center"}>
-          <ComponentsWrapper mb={"10"}>
-            <Select
-              onKeyDown={changeActivityFlag}
-              selectedItem={itemCollection}
-              options={collections}
-              select={changeCollection}
-            />
-          </ComponentsWrapper>
-          <Input
-            ref={inputTitle}
-            value={collectionItem.title ? collectionItem.title : ""}
-            onChange={addTitle}
-            placeholder="Add title..."
-          />
-          <ComponentsWrapper mb={"5"} mt={"10"}>
-            <PriceInput
-              value={collectionItem.price ? collectionItem.price : ""}
-              onChange={changeItemPrice}
-            ></PriceInput>
-          </ComponentsWrapper>
-          <ComponentsWrapper mb={"5"} mt={"10"}>
-            <TextArea
-              value={collectionItem.description}
-              changeDescription={changeNewItemDescription}
-            />
-          </ComponentsWrapper>
-          <Button
-            onClick={() => onSubmit(collectionItem, selectedOptionValue)}
-            warning
-          >
-            {buttonText}
-          </Button>
-        </Flex>
-      </Flex>
+      {collections.length > 0 ? (
+        <div>
+          <PageTitle>{pageTitle}</PageTitle>
+          <Flex>
+            <Flex direction={"column"} justify={"center"} align="center">
+              <Card edited={true} {...collectionItem} />
+            </Flex>
+            <Flex direction={"column"} justify={"center"}>
+              <ComponentsWrapper mb={"10"}>
+                <Select
+                  onKeyDown={changeActivityFlag}
+                  selectedItem={selectedOptionValue}
+                  options={collections}
+                  select={changeCollection}
+                />
+              </ComponentsWrapper>
+              <Input
+                ref={inputTitle}
+                value={collectionItem.title ? collectionItem.title : ""}
+                onChange={addTitle}
+                placeholder="Add title..."
+              />
+              <ComponentsWrapper mb={"5"} mt={"10"}>
+                <PriceInput
+                  value={collectionItem.price ? collectionItem.price : ""}
+                  onChange={changeItemPrice}
+                ></PriceInput>
+              </ComponentsWrapper>
+              <ComponentsWrapper mb={"5"} mt={"10"}>
+                <TextArea
+                  value={collectionItem.description}
+                  changeDescription={changeNewItemDescription}
+                />
+              </ComponentsWrapper>
+              <Button
+                onClick={() => onSubmit(collectionItem, selectedOptionValue)}
+                warning
+              >
+                {buttonText}
+              </Button>
+            </Flex>
+          </Flex>
+        </div>
+      ) : (
+        <Loader />
+      )}
     </>
   );
 }
