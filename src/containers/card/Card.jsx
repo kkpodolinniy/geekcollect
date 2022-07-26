@@ -45,11 +45,15 @@ function Card({ edited, id, price, title, description, collection }) {
           <CardTitle>{title}</CardTitle>
           <CardPrice>{price ? `$${price}` : "Not For Sale"}</CardPrice>
         </MainCardInfo>
-        <CollectionName>Collection: {collection}</CollectionName>
+        {collection && (
+          <CollectionName>Collection: {collection}</CollectionName>
+        )}
 
-        <CardDescriptionWrapper>
-          <CardDescription>{description}</CardDescription>
-        </CardDescriptionWrapper>
+        {description && (
+          <CardDescriptionWrapper>
+            <CardDescription>{description}</CardDescription>
+          </CardDescriptionWrapper>
+        )}
       </CardInfoWrapper>
     </CardWrapper>
   );

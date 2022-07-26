@@ -5,7 +5,7 @@ import { LoaderWrapper } from "./styled";
 function Loader() {
   return (
     <LoaderWrapper>
-      <PacmanLoader />
+      <PacmanLoader color="#f0af2d" />
     </LoaderWrapper>
   );
 }

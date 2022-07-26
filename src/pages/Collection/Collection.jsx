@@ -43,10 +43,19 @@ function Collection() {
   return (
     <CollectionContainer>
       {collectionItemFetchStatus === "loading" && <Loader />}
+      {collectionItemFetchStatus === "resolved" &&
+        collectionItems.length === 0 && (
+          <EmptyCollectionContainer>
+            <MockImage src={noElementsImage} alt="" />
+            <EmptyTitle>Your collection is empty...</EmptyTitle>
+          </EmptyCollectionContainer>
+        )}
       {collectionItemFetchError && (
         <PageTitle>An error occured: {collectionItemFetchError}</PageTitle>
       )}
-      {allCollections.length && collectionItems && collectionItems.length ? (
+      {collectionItemFetchStatus === "resolved" &&
+        allCollections.length > 0 &&
+        collectionItems.length > 0 &&
         collectionItems.map((item) => {
           return (
             <Card
@@ -58,15 +67,37 @@ function Collection() {
               description={item.description}
             />
           );
-        })
-      ) : (
-        <EmptyCollectionContainer>
-          <MockImage src={noElementsImage} alt="" />
-          <EmptyTitle>Your collection is empty...</EmptyTitle>
-        </EmptyCollectionContainer>
-      )}
+        })}
     </CollectionContainer>
   );
 }
 
 export default Collection;
+
+// (
+//   <CollectionContainer>
+//     {collectionItemFetchStatus === "loading" && <Loader />}
+//     {collectionItemFetchError && (
+//       <PageTitle>An error occured: {collectionItemFetchError}</PageTitle>
+//     )}
+//     {allCollections.length && collectionItems && collectionItems.length ? (
+//       collectionItems.map((item) => {
+//         return (
+//           <Card
+//             price={item.price}
+//             collection={getCollectionInfo(item.collection)}
+//             key={item.id}
+//             id={item.id}
+//             title={item.title}
+//             description={item.description}
+//           />
+//         );
+//       })
+//     ) : (
+//       <EmptyCollectionContainer>
+//         <MockImage src={noElementsImage} alt="" />
+//         <EmptyTitle>Your collection is empty...</EmptyTitle>
+//       </EmptyCollectionContainer>
+//     )}
+//   </CollectionContainer>
+// );

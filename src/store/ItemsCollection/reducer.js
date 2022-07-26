@@ -118,6 +118,9 @@ const collectItemSlice = createSlice({
     setSelectedItemIdAction(state, action) {
       state.selectedItemId = action.payload;
     },
+    clearItemCollectionAction(state, action) {
+      state.сollectionItems = [];
+    },
   },
   extraReducers: {
     [fetchItems.pending]: (state, action) => {
@@ -140,5 +143,6 @@ export const {
   deleteCollectionItem,
   changeCollectionItem,
   setSelectedItemIdAction,
+  clearItemCollectionAction,
 } = collectItemSlice.actions;
 export default collectItemSlice.reducer;

@@ -11,6 +11,7 @@ import Button from "../../components/Button";
 import Flex from "../../components/Flex";
 import { allCollectionsSelector } from "../../store/Collections/selectors";
 import Loader from "../../components/Loader";
+import { addCollectionToAPI } from "../../store/Collections/reducer";
 
 const initialCollectionItem = {
   price: 0,
@@ -30,6 +31,7 @@ function HandleItemInfo({
   const activityFlag = useRef(false);
   const inputTitle = useRef(null);
   const collections = useSelector(allCollectionsSelector);
+  const dispatch = useDispatch();
   const [selectedOptionValue, setSelectedOptionValue] = useState(
     collections.find((collection) => {
       return Number(collection.id) === collectionItem.collection;
@@ -38,7 +40,13 @@ function HandleItemInfo({
   const changeActivityFlag = () => {
     activityFlag.current = true;
   };
-
+  const getCollectionInfo = (id) => {
+    if (!id) return "";
+    const searchedCollection = collections.find((collection) => {
+      return Number(collection.id) === id;
+    });
+    return searchedCollection.label;
+  };
   useEffect(() => {
     inputTitle.current.focus();
   }, []);
@@ -61,11 +69,25 @@ function HandleItemInfo({
     changeActivityFlag();
     setCollectionItem({ ...collectionItem, description: value });
   }
-  function changeCollection(value) {
+  async function addNewCollection(value) {
+    await dispatch(addCollectionToAPI(value)).then((data) => {
+      setSelectedOptionValue(data.payload);
+      setCollectionItem({
+        ...collectionItem,
+        collection: Number(data.payload.id),
+      });
+    });
     changeActivityFlag();
-    setCollectionItem({ ...collectionItem, collection: Number(value.id) });
-    setSelectedOptionValue(value);
   }
+
+  function changeExistedCollections(value) {
+    setSelectedOptionValue(value);
+    setCollectionItem({
+      ...collectionItem,
+      collection: Number(value.id),
+    });
+  }
+
   function changeItemPrice(value) {
     changeActivityFlag();
     setCollectionItem({ ...collectionItem, price: value });
@@ -78,7 +100,11 @@ function HandleItemInfo({
           <PageTitle>{pageTitle}</PageTitle>
           <Flex>
             <Flex direction={"column"} justify={"center"} align="center">
-              <Card edited={true} {...collectionItem} />
+              <Card
+                edited={true}
+                {...collectionItem}
+                collection={getCollectionInfo(collectionItem.collection)}
+              />
             </Flex>
             <Flex direction={"column"} justify={"center"}>
               <ComponentsWrapper mb={"10"}>
@@ -86,7 +112,8 @@ function HandleItemInfo({
                   onKeyDown={changeActivityFlag}
                   selectedItem={selectedOptionValue}
                   options={collections}
-                  select={changeCollection}
+                  addNewCollection={addNewCollection}
+                  changeExistedCollections={changeExistedCollections}
                 />
               </ComponentsWrapper>
               <Input

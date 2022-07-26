@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import CreatableSelect from "react-select/creatable";
-function Select({ select, selectedItem, options, onKeyDown }) {
+function Select({
+  changeExistedCollections,
+  addNewCollection,
+  selectedItem,
+  options,
+  onKeyDown,
+}) {
   const [stateOptions, setOptions] = useState(options);
   const [selectedValue, setSelectedValue] = useState(selectedItem);
-  console.log(selectedValue);
   const createOption = (label) => ({
     label,
     value: label.toLowerCase().replace(/\W/g, ""),
@@ -11,9 +16,7 @@ function Select({ select, selectedItem, options, onKeyDown }) {
 
   const handleCreate = (option) => {
     const newOption = createOption(option);
-    setOptions([...stateOptions, newOption]);
-    setSelectedValue(newOption);
-    select(newOption);
+    addNewCollection(newOption);
   };
 
   return (
@@ -25,12 +28,11 @@ function Select({ select, selectedItem, options, onKeyDown }) {
       /> */}
       <CreatableSelect
         onChange={(e) => {
-          select(e);
-          setSelectedValue(e);
+          changeExistedCollections(e);
         }}
         onCreateOption={handleCreate}
-        options={stateOptions}
-        value={selectedValue}
+        options={options}
+        value={selectedItem}
         defaultValue={selectedItem}
         onKeyDown={onKeyDown}
       ></CreatableSelect>

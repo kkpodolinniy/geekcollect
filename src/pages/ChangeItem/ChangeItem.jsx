@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setSelectedItemIdAction,
-  changeCollectionItem,
+  clearItemCollectionAction,
 } from "../../store/ItemsCollection/actions";
 import { changeItem } from "../../store/ItemsCollection/reducer";
 import { addCollectionAction } from "../../store/Collections/actions";
@@ -29,10 +29,12 @@ function ChangeItem() {
   useEffect(() => {
     dispatch(setSelectedItemIdAction(id));
   }, [id, dispatch]);
-  const changeItemCollection = (collectionItem, selectedOptionValue) => {
-    dispatch(changeItem(collectionItem));
-    dispatch(addCollectionAction(selectedOptionValue));
-    navigate("/");
+  const changeItemCollection = async (collectionItem, selectedOptionValue) => {
+    await dispatch(changeItem(collectionItem)).then(() => {
+      dispatch(addCollectionAction(selectedOptionValue));
+      dispatch(clearItemCollectionAction());
+      navigate("/");
+    });
   };
   return (
     <>
