@@ -7,6 +7,7 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import Theme from "./Theme";
 import { PersistGate } from "redux-persist/integration/react";
+import "react-toastify/dist/ReactToastify.css";
 
 function Main() {
   return (
