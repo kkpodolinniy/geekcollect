@@ -3,6 +3,7 @@ import {
   deleteCollectionItem,
   changeCollectionItem,
   setSelectedItemIdAction,
+  clearItemCollectionAction,
 } from "./reducer";
 
 export {
@@ -10,4 +11,5 @@ export {
   deleteCollectionItem,
   changeCollectionItem,
   setSelectedItemIdAction,
+  clearItemCollectionAction,
 };

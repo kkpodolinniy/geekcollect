@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Card from "../../containers/Card";
 import Input from "../../components/Input/Input";
 import TextArea from "../../components/TextArea/TextArea";
@@ -10,81 +10,88 @@ import PageTitle from "../../components/PageTitle";
 import Button from "../../components/Button";
 import Flex from "../../components/Flex";
 import { allCollectionsSelector } from "../../store/Collections/selectors";
-import uuid from "react-uuid";
+import Loader from "../../components/Loader";
+import { addCollectionToAPI } from "../../store/Collections/reducer";
+
+const initialCollectionItem = {
+  price: 0,
+  title: "",
+  collection: "",
+  description: "",
+  photo: "https://picsum.photos/200/300",
+};
 
 function HandleItemInfo({
-  itemCollection,
-  id,
-  selectedItem,
+  selectedItem = initialCollectionItem,
   pageTitle,
   buttonText,
   onSubmit,
 }) {
-  const initialCollectionItem = {
-    price: null,
-    id: uuid(),
-    title: "",
-    collection: null,
-    description: "",
-    photo: "https://picsum.photos/200/300",
-  };
-  const [collectionItem, setCollectionItem] = useState(
-    selectedItem ? selectedItem : initialCollectionItem
-  );
-  const activityFlag = useRef(false);
+  const [collectionItem, setCollectionItem] = useState(selectedItem);
   const inputTitle = useRef(null);
   const collections = useSelector(allCollectionsSelector);
-  const [selectedOptionValue, setSelectedOptionValue] = useState(null);
-  const changeActivityFlag = () => {
-    activityFlag.current = true;
-  };
+
+  const initialSelectedValue = collections.find((collection) => {
+    return Number(collection.id) === collectionItem.collection;
+  });
+
+  const dispatch = useDispatch();
+  const [selectedOptionValue, setSelectedOptionValue] =
+    useState(initialSelectedValue);
 
   useEffect(() => {
     inputTitle.current.focus();
   }, []);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!activityFlag.current)
-        alert(
-          "“Learn as if you will live forever, live like you will die tomorrow.” — Mahatma Gandhi"
-        );
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, []);
 
   function addTitle(value) {
-    changeActivityFlag();
     setCollectionItem({ ...collectionItem, title: value });
   }
 
   function changeNewItemDescription(value) {
-    changeActivityFlag();
     setCollectionItem({ ...collectionItem, description: value });
   }
-  function changeCollection(value) {
-    changeActivityFlag();
-    setCollectionItem({ ...collectionItem, collection: value.label });
-    setSelectedOptionValue(value);
+  function addNewCollection(value) {
+    dispatch(addCollectionToAPI(value)).then((data) => {
+      setSelectedOptionValue(data.payload);
+      setCollectionItem({
+        ...collectionItem,
+        collection: Number(data.payload.id),
+      });
+    });
   }
+
+  function changeExistedCollections(value) {
+    setSelectedOptionValue(value);
+    setCollectionItem({
+      ...collectionItem,
+      collection: Number(value.id),
+    });
+  }
+
   function changeItemPrice(value) {
-    changeActivityFlag();
     setCollectionItem({ ...collectionItem, price: value });
   }
 
+  if (!collections.length) return <Loader />;
+
   return (
-    <>
+    <div>
       <PageTitle>{pageTitle}</PageTitle>
       <Flex>
         <Flex direction={"column"} justify={"center"} align="center">
-          <Card edited={true} {...collectionItem} />
+          <Card
+            edited
+            {...collectionItem}
+            collection={selectedOptionValue?.label}
+          />
         </Flex>
         <Flex direction={"column"} justify={"center"}>
           <ComponentsWrapper mb={"10"}>
             <Select
-              onKeyDown={changeActivityFlag}
-              selectedItem={itemCollection}
+              selectedItem={selectedOptionValue}
               options={collections}
-              select={changeCollection}
+              addNewCollection={addNewCollection}
+              changeExistedCollections={changeExistedCollections}
             />
           </ComponentsWrapper>
           <Input
@@ -113,7 +120,7 @@ function HandleItemInfo({
           </Button>
         </Flex>
       </Flex>
-    </>
+    </div>
   );
 }
 
