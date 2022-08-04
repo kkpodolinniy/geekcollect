@@ -7,7 +7,6 @@ import {
 } from "../../store/ItemsCollection/actions";
 import { changeItem } from "../../store/ItemsCollection/reducer";
 import { addCollectionAction } from "../../store/Collections/actions";
-import { collectionDetailSelector } from "../../store/Collections/selectors";
 import { selectedItemInfoSelector } from "../../store/ItemsCollection/selectors";
 import { useNavigate } from "react-router-dom";
 
@@ -17,18 +16,12 @@ function ChangeItem() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  dispatch(setSelectedItemIdAction(id));
-  const selectedItem = useSelector(selectedItemInfoSelector); //TODO change name - "initial item info"
-  const itemCollection = useSelector((state) =>
-    collectionDetailSelector(
-      state,
-      selectedItem.collection ? selectedItem.collection : ""
-    )
-  );
 
   useEffect(() => {
     dispatch(setSelectedItemIdAction(id));
   }, [id, dispatch]);
+
+  const selectedItem = useSelector(selectedItemInfoSelector);
   const changeItemCollection = async (collectionItem, selectedOptionValue) => {
     await dispatch(changeItem(collectionItem)).then(() => {
       dispatch(addCollectionAction(selectedOptionValue));
@@ -38,10 +31,9 @@ function ChangeItem() {
   };
   return (
     <>
-      {id ? (
+      {selectedItem && selectedItem?.id === id ? (
         <HandleItemInfo
           selectedItem={selectedItem}
-          itemCollection={itemCollection}
           pageTitle={"Edit Your Collection Item"}
           onSubmit={changeItemCollection}
           buttonText={"Change"}

@@ -1,11 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { baseUrl } from "../../constants/api";
+const createOption = (label) => ({
+  label,
+  value: label.toLowerCase().replace(/\W/g, ""),
+});
 
 export const fetchCollections = createAsyncThunk(
   "collections/fetchCollections",
   async function (_, { dispatch, rejectWithValue }) {
-    const response = await fetch(
-      "https://62ce69c0066bd2b699345820.mockapi.io/api/v1/collections"
-    );
+    const response = await fetch(`${baseUrl}/collections`);
     const data = await response.json();
     dispatch(addAllCollection(data));
   }
@@ -14,14 +17,13 @@ export const fetchCollections = createAsyncThunk(
 export const addCollectionToAPI = createAsyncThunk(
   "collections/addCollectionToAPI",
   async function (item, { dispatch, rejectWithValue }) {
-    const response = await fetch(
-      "https://62ce69c0066bd2b699345820.mockapi.io/api/v1/collections",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(item),
-      }
-    );
+    console.log(item);
+    const preparedOption = createOption(item);
+    const response = await fetch(`${baseUrl}/collections`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(preparedOption),
+    });
     const data = await response.json();
     dispatch(addCollectionAction(data));
     return data;

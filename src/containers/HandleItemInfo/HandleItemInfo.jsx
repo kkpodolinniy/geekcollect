@@ -28,56 +28,36 @@ function HandleItemInfo({
   onSubmit,
 }) {
   const [collectionItem, setCollectionItem] = useState(selectedItem);
-  const activityFlag = useRef(false);
   const inputTitle = useRef(null);
   const collections = useSelector(allCollectionsSelector);
+
+  const initialSelectedValue = collections.find((collection) => {
+    return Number(collection.id) === collectionItem.collection;
+  });
+
   const dispatch = useDispatch();
-  const [selectedOptionValue, setSelectedOptionValue] = useState(
-    collections.find((collection) => {
-      return Number(collection.id) === collectionItem.collection;
-    })
-  );
-  const changeActivityFlag = () => {
-    activityFlag.current = true;
-  };
-  const getCollectionInfo = (id) => {
-    if (!id) return "";
-    const searchedCollection = collections.find((collection) => {
-      return Number(collection.id) === id;
-    });
-    return searchedCollection.label;
-  };
+  const [selectedOptionValue, setSelectedOptionValue] =
+    useState(initialSelectedValue);
+
   useEffect(() => {
     inputTitle.current.focus();
   }, []);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!activityFlag.current)
-        alert(
-          "“Learn as if you will live forever, live like you will die tomorrow.” — Mahatma Gandhi"
-        );
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, []);
 
   function addTitle(value) {
-    changeActivityFlag();
     setCollectionItem({ ...collectionItem, title: value });
   }
 
   function changeNewItemDescription(value) {
-    changeActivityFlag();
     setCollectionItem({ ...collectionItem, description: value });
   }
-  async function addNewCollection(value) {
-    await dispatch(addCollectionToAPI(value)).then((data) => {
+  function addNewCollection(value) {
+    dispatch(addCollectionToAPI(value)).then((data) => {
       setSelectedOptionValue(data.payload);
       setCollectionItem({
         ...collectionItem,
         collection: Number(data.payload.id),
       });
     });
-    changeActivityFlag();
   }
 
   function changeExistedCollections(value) {
@@ -89,64 +69,58 @@ function HandleItemInfo({
   }
 
   function changeItemPrice(value) {
-    changeActivityFlag();
     setCollectionItem({ ...collectionItem, price: value });
   }
 
+  if (!collections.length) return <Loader />;
+
   return (
-    <>
-      {collections.length > 0 ? (
-        <div>
-          <PageTitle>{pageTitle}</PageTitle>
-          <Flex>
-            <Flex direction={"column"} justify={"center"} align="center">
-              <Card
-                edited={true}
-                {...collectionItem}
-                collection={getCollectionInfo(collectionItem.collection)}
-              />
-            </Flex>
-            <Flex direction={"column"} justify={"center"}>
-              <ComponentsWrapper mb={"10"}>
-                <Select
-                  onKeyDown={changeActivityFlag}
-                  selectedItem={selectedOptionValue}
-                  options={collections}
-                  addNewCollection={addNewCollection}
-                  changeExistedCollections={changeExistedCollections}
-                />
-              </ComponentsWrapper>
-              <Input
-                ref={inputTitle}
-                value={collectionItem.title ? collectionItem.title : ""}
-                onChange={addTitle}
-                placeholder="Add title..."
-              />
-              <ComponentsWrapper mb={"5"} mt={"10"}>
-                <PriceInput
-                  value={collectionItem.price ? collectionItem.price : ""}
-                  onChange={changeItemPrice}
-                ></PriceInput>
-              </ComponentsWrapper>
-              <ComponentsWrapper mb={"5"} mt={"10"}>
-                <TextArea
-                  value={collectionItem.description}
-                  changeDescription={changeNewItemDescription}
-                />
-              </ComponentsWrapper>
-              <Button
-                onClick={() => onSubmit(collectionItem, selectedOptionValue)}
-                warning
-              >
-                {buttonText}
-              </Button>
-            </Flex>
-          </Flex>
-        </div>
-      ) : (
-        <Loader />
-      )}
-    </>
+    <div>
+      <PageTitle>{pageTitle}</PageTitle>
+      <Flex>
+        <Flex direction={"column"} justify={"center"} align="center">
+          <Card
+            edited
+            {...collectionItem}
+            collection={selectedOptionValue?.label}
+          />
+        </Flex>
+        <Flex direction={"column"} justify={"center"}>
+          <ComponentsWrapper mb={"10"}>
+            <Select
+              selectedItem={selectedOptionValue}
+              options={collections}
+              addNewCollection={addNewCollection}
+              changeExistedCollections={changeExistedCollections}
+            />
+          </ComponentsWrapper>
+          <Input
+            ref={inputTitle}
+            value={collectionItem.title ? collectionItem.title : ""}
+            onChange={addTitle}
+            placeholder="Add title..."
+          />
+          <ComponentsWrapper mb={"5"} mt={"10"}>
+            <PriceInput
+              value={collectionItem.price ? collectionItem.price : ""}
+              onChange={changeItemPrice}
+            ></PriceInput>
+          </ComponentsWrapper>
+          <ComponentsWrapper mb={"5"} mt={"10"}>
+            <TextArea
+              value={collectionItem.description}
+              changeDescription={changeNewItemDescription}
+            />
+          </ComponentsWrapper>
+          <Button
+            onClick={() => onSubmit(collectionItem, selectedOptionValue)}
+            warning
+          >
+            {buttonText}
+          </Button>
+        </Flex>
+      </Flex>
+    </div>
   );
 }
 

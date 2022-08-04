@@ -21,11 +21,21 @@ import Loader from "../../components/Loader";
 
 function Collection() {
   const collectionItemFetchStatus = useSelector(CollectionItemStatusSelector);
-  const allCollections = useSelector(allCollectionsSelector);
+  const mappedCollections = collectionArrayToMap(
+    useSelector(allCollectionsSelector)
+  );
   const collectionItemFetchError = useSelector(CollectionItemErrorSelector);
   const collectionItems = useSelector(collectionSelector);
-  const dispatch = useDispatch();
 
+  const responsedEmptyCollection =
+    collectionItemFetchStatus === "resolved" && collectionItems.length === 0;
+
+  const responsedWithValue =
+    collectionItemFetchStatus === "resolved" &&
+    mappedCollections?.size > 0 &&
+    collectionItems.length > 0;
+
+  const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchItems());
   }, [dispatch]);
@@ -34,33 +44,42 @@ function Collection() {
     dispatch(fetchCollections());
   }, [dispatch]);
 
-  function getCollectionInfo(id) {
-    const searchedCollection = allCollections.find(
-      (collection) => Number(collection.id) === id
-    );
-    return searchedCollection.label;
+  function collectionArrayToMap(arr) {
+    if (arr.length) {
+      let mappedCollection = new Map();
+
+      for (let obj of arr) {
+        mappedCollection.set(Number(obj.id), {
+          label: obj.label,
+          value: obj.value,
+        });
+      }
+      return mappedCollection;
+    }
   }
-  return (
-    <CollectionContainer>
-      {collectionItemFetchStatus === "loading" && <Loader />}
-      {collectionItemFetchStatus === "resolved" &&
-        collectionItems.length === 0 && (
-          <EmptyCollectionContainer>
-            <MockImage src={noElementsImage} alt="" />
-            <EmptyTitle>Your collection is empty...</EmptyTitle>
-          </EmptyCollectionContainer>
-        )}
-      {collectionItemFetchError && (
-        <PageTitle>An error occured: {collectionItemFetchError}</PageTitle>
-      )}
-      {collectionItemFetchStatus === "resolved" &&
-        allCollections.length > 0 &&
-        collectionItems.length > 0 &&
-        collectionItems.map((item) => {
+
+  if (collectionItemFetchStatus === "loading") {
+    return <Loader />;
+  }
+  if (responsedEmptyCollection) {
+    return (
+      <EmptyCollectionContainer>
+        <MockImage src={noElementsImage} alt="" />
+        <EmptyTitle>Your collection is empty...</EmptyTitle>
+      </EmptyCollectionContainer>
+    );
+  }
+  if (collectionItemFetchError) {
+    return <PageTitle>An error occured: {collectionItemFetchError}</PageTitle>;
+  }
+  if (responsedWithValue) {
+    return (
+      <CollectionContainer>
+        {collectionItems.map((item) => {
           return (
             <Card
               price={item.price}
-              collection={getCollectionInfo(item.collection)}
+              collection={mappedCollections.get(item.collection).label}
               key={item.id}
               id={item.id}
               title={item.title}
@@ -68,36 +87,9 @@ function Collection() {
             />
           );
         })}
-    </CollectionContainer>
-  );
+      </CollectionContainer>
+    );
+  }
 }
 
 export default Collection;
-
-// (
-//   <CollectionContainer>
-//     {collectionItemFetchStatus === "loading" && <Loader />}
-//     {collectionItemFetchError && (
-//       <PageTitle>An error occured: {collectionItemFetchError}</PageTitle>
-//     )}
-//     {allCollections.length && collectionItems && collectionItems.length ? (
-//       collectionItems.map((item) => {
-//         return (
-//           <Card
-//             price={item.price}
-//             collection={getCollectionInfo(item.collection)}
-//             key={item.id}
-//             id={item.id}
-//             title={item.title}
-//             description={item.description}
-//           />
-//         );
-//       })
-//     ) : (
-//       <EmptyCollectionContainer>
-//         <MockImage src={noElementsImage} alt="" />
-//         <EmptyTitle>Your collection is empty...</EmptyTitle>
-//       </EmptyCollectionContainer>
-//     )}
-//   </CollectionContainer>
-// );

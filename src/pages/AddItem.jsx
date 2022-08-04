@@ -9,11 +9,8 @@ function AddItem() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const addItem = async (collectionItem) => {
-    await dispatch(addNewItem(collectionItem)).then(() => {
-      dispatch(clearItemCollectionAction());
-      navigate("/");
-    });
+  const addItem = (collectionItem) => {
+    dispatch(addNewItem(collectionItem)).then(() => navigate("/"));
   };
   return (
     <>
