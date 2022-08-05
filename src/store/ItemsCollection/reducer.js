@@ -3,14 +3,23 @@ import { baseUrl } from "../../constants/api";
 
 export const fetchItems = createAsyncThunk(
   "collectionItems/fetchItems",
-  async function (_, { rejectWithValue }) {
+  async function (_, { rejectWithValue, getState, dispatch }) {
+    const { page, limit } = getState().сollectionItems.meta.pagination;
     try {
-      const response = await fetch(`${baseUrl}/items`);
+      const response = await fetch(
+        `${baseUrl}/items?page=${page}&limit=${limit}`
+      );
       if (!response.ok) {
         throw new Error("Server Error");
       }
 
       const data = await response.json();
+
+      dispatch(setPaginationPageAction());
+      console.log(data.length);
+      if (data.length === 0) {
+        dispatch(setPaginationtoLoadFlag());
+      }
 
       return data;
     } catch (error) {
@@ -30,6 +39,8 @@ export const deleteItem = createAsyncThunk(
         throw new Error("Server Error");
       }
       dispatch(deleteCollectionItem({ id }));
+      const data = await response.json();
+      return data;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -62,11 +73,14 @@ export const addNewItem = createAsyncThunk(
   "collectionItems/addNewItem",
   async function (item, { dispatch, rejectWithValue }) {
     try {
-      const response = await fetch(`${baseUrl}/items`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(item),
-      });
+      const response = await fetch(
+        "https://62ce69c0066bd2b699345820.mockapi.io/api/v1/items",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(item),
+        }
+      );
       if (!response.ok) {
         throw new Error("Server Error");
       }
@@ -86,6 +100,18 @@ const collectItemSlice = createSlice({
     selectedItemId: null,
     status: null,
     error: null,
+    deletedItem: {
+      status: null,
+      error: null,
+      deletedItemFullInfo: {},
+    },
+    meta: {
+      pagination: {
+        page: 1,
+        limit: 10,
+        needToLoad: true,
+      },
+    },
   },
   reducers: {
     addCollectionItem(state, action) {
@@ -111,8 +137,17 @@ const collectItemSlice = createSlice({
     setSelectedItemIdAction(state, action) {
       state.selectedItemId = action.payload;
     },
-    clearItemCollectionAction(state, action) {
+    clearItemCollectionAction(state, _) {
       state.сollectionItems = [];
+    },
+    clearDeletedItemAction(state, _) {
+      state.deletedItem = {};
+    },
+    setPaginationPageAction(state, _) {
+      state.meta.pagination.page += 1;
+    },
+    setPaginationtoLoadFlag(state, _) {
+      state.meta.pagination.needToLoad = false;
     },
   },
   extraReducers: {
@@ -122,11 +157,23 @@ const collectItemSlice = createSlice({
     },
     [fetchItems.fulfilled]: (state, action) => {
       state.status = "resolved";
-      state.сollectionItems = action.payload;
+      state.сollectionItems = state.сollectionItems.concat(action.payload);
     },
     [fetchItems.rejected]: (state, action) => {
       state.status = "rejected";
       state.error = action.payload;
+    },
+    [deleteItem.pending]: (state, action) => {
+      state.deletedItem.status = "loading";
+      state.deletedItem.error = null;
+    },
+    [deleteItem.fulfilled]: (state, action) => {
+      state.deletedItem.deletedItemFullInfo = action.payload;
+      state.deletedItem.status = "resolved";
+    },
+    [deleteItem.rejected]: (state, action) => {
+      state.deletedItem.status = "rejected";
+      state.deletedItem.error = action.payload;
     },
   },
 });
@@ -137,5 +184,8 @@ export const {
   changeCollectionItem,
   setSelectedItemIdAction,
   clearItemCollectionAction,
+  clearDeletedItemAction,
+  setPaginationPageAction,
+  setPaginationtoLoadFlag,
 } = collectItemSlice.actions;
 export default collectItemSlice.reducer;

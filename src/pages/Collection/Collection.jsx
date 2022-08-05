@@ -13,34 +13,43 @@ import {
   collectionSelector,
   CollectionItemStatusSelector,
   CollectionItemErrorSelector,
+  DeletedCollectionItemStatusSelector,
+  DeletedCollectionItemItemDetail,
+  CollectionItemLoadFlagSelector,
 } from "../../store/ItemsCollection/selectors";
 import { allCollectionsSelector } from "../../store/Collections/selectors";
 import { fetchItems } from "../../store/ItemsCollection/reducer";
 import { fetchCollections } from "../../store/Collections/reducer";
 import Loader from "../../components/Loader";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { clearDeletedItemAction } from "../../store/ItemsCollection/actions";
+import { ToastContainer, toast } from "react-toastify";
+import { toastSuccess } from "../../helpers/notifications/index";
 
 function Collection() {
   const collectionItemFetchStatus = useSelector(CollectionItemStatusSelector);
+
   const mappedCollections = collectionArrayToMap(
     useSelector(allCollectionsSelector)
   );
   const collectionItemFetchError = useSelector(CollectionItemErrorSelector);
   const collectionItems = useSelector(collectionSelector);
+  const deletedItemStatus = useSelector(DeletedCollectionItemStatusSelector);
+  const deletedItemInfo = useSelector(DeletedCollectionItemItemDetail);
+  const loadMoreCollectionItemsFlag = useSelector(
+    CollectionItemLoadFlagSelector
+  );
 
   const responsedEmptyCollection =
     collectionItemFetchStatus === "resolved" && collectionItems.length === 0;
 
   const responsedWithValue =
-    collectionItemFetchStatus === "resolved" &&
-    mappedCollections?.size > 0 &&
-    collectionItems.length > 0;
+    mappedCollections?.size > 0 && collectionItems.length > 0;
 
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchItems());
-  }, [dispatch]);
 
   useEffect(() => {
+    dispatch(fetchItems());
     dispatch(fetchCollections());
   }, [dispatch]);
 
@@ -58,8 +67,19 @@ function Collection() {
     }
   }
 
-  if (collectionItemFetchStatus === "loading") {
-    return <Loader />;
+  useEffect(() => {
+    if (deletedItemStatus === "resolved") {
+      toastSuccess(`${deletedItemInfo.title} was succesfully deleted!`);
+    }
+    return () => {
+      dispatch(clearDeletedItemAction());
+    };
+  }, [deletedItemStatus]);
+
+  function loadMoreCollectionData() {
+    if (collectionItems.length !== 0) {
+      dispatch(fetchItems());
+    }
   }
   if (responsedEmptyCollection) {
     return (
@@ -75,20 +95,31 @@ function Collection() {
   if (responsedWithValue) {
     return (
       <CollectionContainer>
-        {collectionItems.map((item) => {
-          return (
-            <Card
-              price={item.price}
-              collection={mappedCollections.get(item.collection).label}
-              key={item.id}
-              id={item.id}
-              title={item.title}
-              description={item.description}
-            />
-          );
-        })}
+        <InfiniteScroll
+          dataLength={collectionItems.length}
+          next={loadMoreCollectionData}
+          hasMore={loadMoreCollectionItemsFlag}
+          loader={<Loader />}
+          style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}
+        >
+          {collectionItems.map((item) => {
+            return (
+              <Card
+                price={item.price}
+                collection={mappedCollections.get(item.collection).label}
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                description={item.description}
+              />
+            );
+          })}
+        </InfiniteScroll>
+        <ToastContainer />
       </CollectionContainer>
     );
+  } else {
+    return <Loader />;
   }
 }
 

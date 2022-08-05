@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
-
+//TODO add collectionArrayToMap
 const allCollectionsSelector = (state) => state.collections.allCollections;
 const collectionDetailSelector = createSelector(
   [
