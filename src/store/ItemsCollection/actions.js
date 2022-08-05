@@ -5,6 +5,7 @@ import {
   setSelectedItemIdAction,
   clearItemCollectionAction,
   clearDeletedItemAction,
+  setPaginationPageAction,
 } from "./reducer";
 
 export {
@@ -14,4 +15,5 @@ export {
   setSelectedItemIdAction,
   clearItemCollectionAction,
   clearDeletedItemAction,
+  setPaginationPageAction,
 };

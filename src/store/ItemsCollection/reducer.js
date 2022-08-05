@@ -3,14 +3,24 @@ import { baseUrl } from "../../constants/api";
 
 export const fetchItems = createAsyncThunk(
   "collectionItems/fetchItems",
-  async function ({ page, limit }, { rejectWithValue }) {
+  async function (_, { rejectWithValue, getState, dispatch }) {
+    const { page, limit } = getState().сollectionItems.meta.pagination;
     try {
-      const response = await fetch(`${baseUrl}/items`);
+      const response = await fetch(
+        `${baseUrl}/items?page=${page}&limit=${limit}`
+      );
       if (!response.ok) {
         throw new Error("Server Error");
       }
 
       const data = await response.json();
+
+      dispatch(setPaginationPageAction());
+      console.log(data.length);
+      if (data.length === 0) {
+        dispatch(setPaginationtoLoadFlag());
+      }
+
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -95,6 +105,13 @@ const collectItemSlice = createSlice({
       error: null,
       deletedItemFullInfo: {},
     },
+    meta: {
+      pagination: {
+        page: 1,
+        limit: 10,
+        needToLoad: true,
+      },
+    },
   },
   reducers: {
     addCollectionItem(state, action) {
@@ -125,6 +142,12 @@ const collectItemSlice = createSlice({
     },
     clearDeletedItemAction(state, _) {
       state.deletedItem = {};
+    },
+    setPaginationPageAction(state, _) {
+      state.meta.pagination.page += 1;
+    },
+    setPaginationtoLoadFlag(state, _) {
+      state.meta.pagination.needToLoad = false;
     },
   },
   extraReducers: {
@@ -162,5 +185,7 @@ export const {
   setSelectedItemIdAction,
   clearItemCollectionAction,
   clearDeletedItemAction,
+  setPaginationPageAction,
+  setPaginationtoLoadFlag,
 } = collectItemSlice.actions;
 export default collectItemSlice.reducer;
