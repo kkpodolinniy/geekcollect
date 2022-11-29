@@ -1,22 +1,26 @@
-import { createSelector } from "@reduxjs/toolkit";
+import { createSelector } from '@reduxjs/toolkit';
 
-const collectionSelector = (state) => state.сollectionItems.сollectionItems;
-const CollectionItemErrorSelector = (state) => state.сollectionItems.error;
-const CollectionItemStatusSelector = (state) => state.сollectionItems.status;
+const StateSelector = (state) => state;
+const collectionSelector = (state) => {
+  return state.collectionItems.items;
+};
+const CollectionItemErrorSelector = (state) => state.collectionItems.error;
+const CollectionItemStatusSelector = (state) => state.collectionItems.status;
+
 const CollectionItemLoadFlagSelector = (state) =>
-  state.сollectionItems.meta.pagination.needToLoad;
+  state.collectionItems.meta.pagination.needToLoad;
 
 const DeletedCollectionItemErrorSelector = (state) =>
-  state.сollectionItems.deletedItem.error;
+  state.collectionItems.deletedItem.error;
 
 const DeletedCollectionItemStatusSelector = (state) =>
-  state.сollectionItems.deletedItem.status;
+  state.collectionItems.deletedItem.status;
 
 const collectionItemIdSelector = (state) =>
-  state.сollectionItems.selectedItemId;
+  state.collectionItems.selectedItemId;
 
 const DeletedCollectionItemItemDetail = (state) =>
-  state.сollectionItems.deletedItem.deletedItemFullInfo;
+  state.collectionItems.deletedItem.deletedItemFullInfo;
 
 const selectedItemInfoSelector = createSelector(
   [collectionSelector, collectionItemIdSelector],
@@ -24,6 +28,7 @@ const selectedItemInfoSelector = createSelector(
 );
 
 export {
+  StateSelector,
   collectionSelector,
   selectedItemInfoSelector,
   CollectionItemStatusSelector,

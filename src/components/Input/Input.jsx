@@ -2,15 +2,19 @@ import React from "react";
 import { CustomInput } from "./styled";
 
 const Input = React.forwardRef(
-  ({ className, type, min, onChange, placeholder, value }, ref) => {
+  (
+    { fromForm, name, className, type, min, onChange, placeholder, value },
+    ref
+  ) => {
     return (
       <CustomInput
         className={className}
+        name={name}
         type={type}
         min={min}
         value={value}
         ref={ref}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={fromForm ? onChange : (e) => onChange(e.target.value)}
         placeholder={placeholder}
       ></CustomInput>
     );

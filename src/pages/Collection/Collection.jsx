@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
-import Card from "../../containers/Card";
-import { useSelector, useDispatch } from "react-redux";
-import PageTitle from "../../components/PageTitle";
+import React, { useEffect } from 'react';
+import Card from '../../containers/Card';
+import { useSelector, useDispatch } from 'react-redux';
+import PageTitle from '../../components/PageTitle';
 import {
   CollectionContainer,
   MockImage,
   EmptyCollectionContainer,
   EmptyTitle,
-} from "./styled";
-import noElementsImage from "../../assets/images/svg/father-and-daughter.svg";
+} from './styled';
+import noElementsImage from '../../assets/images/svg/father-and-daughter.svg';
 import {
   collectionSelector,
   CollectionItemStatusSelector,
@@ -16,15 +16,15 @@ import {
   DeletedCollectionItemStatusSelector,
   DeletedCollectionItemItemDetail,
   CollectionItemLoadFlagSelector,
-} from "../../store/ItemsCollection/selectors";
-import { allCollectionsSelector } from "../../store/Collections/selectors";
-import { fetchItems } from "../../store/ItemsCollection/reducer";
-import { fetchCollections } from "../../store/Collections/reducer";
-import Loader from "../../components/Loader";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { clearDeletedItemAction } from "../../store/ItemsCollection/actions";
-import { ToastContainer, toast } from "react-toastify";
-import { toastSuccess } from "../../helpers/notifications/index";
+} from '../../store/ItemsCollection/selectors';
+import { allCollectionsSelector } from '../../store/Collections/selectors';
+import { fetchItems } from '../../store/ItemsCollection/reducer';
+import { fetchCollections } from '../../store/Collections/reducer';
+import Loader from '../../components/Loader';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { clearDeletedItemAction } from '../../store/ItemsCollection/actions';
+import { ToastContainer } from 'react-toastify';
+import { toastSuccess } from '../../helpers/notifications/index';
 
 function Collection() {
   const collectionItemFetchStatus = useSelector(CollectionItemStatusSelector);
@@ -32,16 +32,18 @@ function Collection() {
   const mappedCollections = collectionArrayToMap(
     useSelector(allCollectionsSelector)
   );
+
   const collectionItemFetchError = useSelector(CollectionItemErrorSelector);
   const collectionItems = useSelector(collectionSelector);
   const deletedItemStatus = useSelector(DeletedCollectionItemStatusSelector);
+
   const deletedItemInfo = useSelector(DeletedCollectionItemItemDetail);
   const loadMoreCollectionItemsFlag = useSelector(
     CollectionItemLoadFlagSelector
   );
 
   const responsedEmptyCollection =
-    collectionItemFetchStatus === "resolved" && collectionItems.length === 0;
+    collectionItemFetchStatus === 'resolved' && collectionItems.length === 0;
 
   const responsedWithValue =
     mappedCollections?.size > 0 && collectionItems.length > 0;
@@ -54,7 +56,7 @@ function Collection() {
   }, [dispatch]);
 
   function collectionArrayToMap(arr) {
-    if (arr.length) {
+    if (arr && arr.length) {
       let mappedCollection = new Map();
 
       for (let obj of arr) {
@@ -68,7 +70,7 @@ function Collection() {
   }
 
   useEffect(() => {
-    if (deletedItemStatus === "resolved") {
+    if (deletedItemStatus === 'resolved') {
       toastSuccess(`${deletedItemInfo.title} was succesfully deleted!`);
     }
     return () => {
@@ -100,7 +102,7 @@ function Collection() {
           next={loadMoreCollectionData}
           hasMore={loadMoreCollectionItemsFlag}
           loader={<Loader />}
-          style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}
+          style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}
         >
           {collectionItems.map((item) => {
             return (

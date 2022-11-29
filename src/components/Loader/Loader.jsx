@@ -1,10 +1,10 @@
-import React from "react";
-import { PacmanLoader } from "react-spinners";
-import { LoaderWrapper } from "./styled";
+import React from 'react';
+import { PacmanLoader } from 'react-spinners';
+import { LoaderWrapper } from './styled';
 
 function Loader() {
   return (
-    <LoaderWrapper>
+    <LoaderWrapper data-testid="loader">
       <PacmanLoader color="#f0af2d" />
     </LoaderWrapper>
   );

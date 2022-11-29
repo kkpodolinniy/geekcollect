@@ -1,6 +1,8 @@
 import styled, { css } from "styled-components";
 
-export const StyledButton = styled.button`
+export const StyledButton = styled.button.attrs((props) => ({
+  disabled: props.disabled,
+}))`
   padding: 10px 37px;
   border-radius: 4px;
   font-size: 1em;
@@ -45,5 +47,15 @@ export const StyledButton = styled.button`
       background-color: ${(props) =>
         props.outlined ? "transparent" : "#ea4f30"};
       border: ${(props) => (props.outlined ? "1px solid #ea4f30" : "none")};
+    `}
+
+    ${(props) =>
+    props.disabled &&
+    css`
+      opacity: 0.6;
+      cursor: not-allowed;
+      &:active {
+        top: 0px;
+      }
     `}
 `;

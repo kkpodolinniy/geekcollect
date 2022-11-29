@@ -1,6 +1,6 @@
-import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import collectItemReducer from "./ItemsCollection/reducer";
-import collectionReducer from "./Collections/reducer";
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import collectItemReducer from './ItemsCollection/reducer';
+import collectionReducer from './Collections/reducer';
 import {
   persistStore,
   persistReducer,
@@ -10,18 +10,18 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
-} from "redux-persist";
-import storage from "redux-persist/lib/storage";
+} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
 const rootReducer = combineReducers({
-  сollectionItems: collectItemReducer,
+  collectionItems: collectItemReducer,
   collections: collectionReducer,
 });
 
 const persistConfig = {
-  key: "root",
+  key: 'root',
   storage,
-  whitelist: [""],
+  whitelist: [''],
 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

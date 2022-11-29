@@ -1,22 +1,21 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { baseUrl } from "../../constants/api";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { baseUrl } from '../../constants/api';
 
 export const fetchItems = createAsyncThunk(
-  "collectionItems/fetchItems",
+  'collectionItems/fetchItems',
   async function (_, { rejectWithValue, getState, dispatch }) {
-    const { page, limit } = getState().сollectionItems.meta.pagination;
+    const { page, limit } = getState().collectionItems.meta.pagination;
     try {
       const response = await fetch(
         `${baseUrl}/items?page=${page}&limit=${limit}`
       );
       if (!response.ok) {
-        throw new Error("Server Error");
+        throw new Error('Server Error');
       }
 
       const data = await response.json();
 
       dispatch(setPaginationPageAction());
-      console.log(data.length);
       if (data.length === 0) {
         dispatch(setPaginationtoLoadFlag());
       }
@@ -29,14 +28,14 @@ export const fetchItems = createAsyncThunk(
 );
 
 export const deleteItem = createAsyncThunk(
-  "collectionItems/deleteItem",
+  'collectionItems/deleteItem',
   async function ({ id }, { rejectWithValue, dispatch }) {
     try {
       const response = await fetch(`${baseUrl}/items/${id}`, {
-        method: "DELETE",
+        method: 'DELETE',
       });
       if (!response.ok) {
-        throw new Error("Server Error");
+        throw new Error('Server Error');
       }
       dispatch(deleteCollectionItem({ id }));
       const data = await response.json();
@@ -48,55 +47,53 @@ export const deleteItem = createAsyncThunk(
 );
 
 export const changeItem = createAsyncThunk(
-  "collectionItems/changeItem",
+  'collectionItems/changeItem',
   async function (item, { rejectWithValue, dispatch }) {
     try {
       const response = await fetch(`${baseUrl}/items/${item.id}`, {
-        method: "PUT",
+        method: 'PUT',
         body: JSON.stringify(item),
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
       if (!response.ok) {
-        throw new Error("Server Error");
+        throw new Error('Server Error');
       }
       dispatch(changeCollectionItem({ item }));
     } catch (error) {
-      console.log(error.message);
       return rejectWithValue(error.message);
     }
   }
 );
 
 export const addNewItem = createAsyncThunk(
-  "collectionItems/addNewItem",
+  'collectionItems/addNewItem',
   async function (item, { dispatch, rejectWithValue }) {
     try {
       const response = await fetch(
-        "https://62ce69c0066bd2b699345820.mockapi.io/api/v1/items",
+        'https://62ce69c0066bd2b699345820.mockapi.io/api/v1/items',
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(item),
         }
       );
       if (!response.ok) {
-        throw new Error("Server Error");
+        throw new Error('Server Error');
       }
       const data = await response.json();
 
       dispatch(addCollectionItem(data));
     } catch (error) {
-      console.log(error.message);
       return rejectWithValue(error.message);
     }
   }
 );
 const collectItemSlice = createSlice({
-  name: "collectionItems",
+  name: 'collectionItems',
   initialState: {
-    сollectionItems: [],
+    items: [],
     selectedItemId: null,
     status: null,
     error: null,
@@ -115,7 +112,7 @@ const collectItemSlice = createSlice({
   },
   reducers: {
     addCollectionItem(state, action) {
-      state.сollectionItems.push({
+      state.items.push({
         id: action.payload.id,
         title: action.payload.title,
         price: action.payload.price,
@@ -125,12 +122,10 @@ const collectItemSlice = createSlice({
       });
     },
     deleteCollectionItem(state, action) {
-      state.сollectionItems = state.сollectionItems.filter(
-        (item) => item.id !== action.payload.id
-      );
+      state.items = state.items.filter((item) => item.id !== action.payload.id);
     },
     changeCollectionItem(state, action) {
-      state.сollectionItems = state.сollectionItems.map((item) =>
+      state.items = state.items.map((item) =>
         item.id === action.payload.id ? { ...item, ...action.payload } : item
       );
     },
@@ -138,7 +133,7 @@ const collectItemSlice = createSlice({
       state.selectedItemId = action.payload;
     },
     clearItemCollectionAction(state, _) {
-      state.сollectionItems = [];
+      state.items = [];
     },
     clearDeletedItemAction(state, _) {
       state.deletedItem = {};
@@ -152,27 +147,27 @@ const collectItemSlice = createSlice({
   },
   extraReducers: {
     [fetchItems.pending]: (state, action) => {
-      state.status = "loading";
+      state.status = 'loading';
       state.error = null;
     },
     [fetchItems.fulfilled]: (state, action) => {
-      state.status = "resolved";
-      state.сollectionItems = state.сollectionItems.concat(action.payload);
+      state.status = 'resolved';
+      state.items = state.items.concat(action.payload);
     },
     [fetchItems.rejected]: (state, action) => {
-      state.status = "rejected";
+      state.status = 'rejected';
       state.error = action.payload;
     },
     [deleteItem.pending]: (state, action) => {
-      state.deletedItem.status = "loading";
+      state.deletedItem.status = 'loading';
       state.deletedItem.error = null;
     },
     [deleteItem.fulfilled]: (state, action) => {
       state.deletedItem.deletedItemFullInfo = action.payload;
-      state.deletedItem.status = "resolved";
+      state.deletedItem.status = 'resolved';
     },
     [deleteItem.rejected]: (state, action) => {
-      state.deletedItem.status = "rejected";
+      state.deletedItem.status = 'rejected';
       state.deletedItem.error = action.payload;
     },
   },

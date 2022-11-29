@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 import {
   CardWrapper,
@@ -12,37 +12,53 @@ import {
   CardTitle,
   IconBar,
   CollectionName,
-} from "./styled";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import { useDispatch } from "react-redux";
-import { deleteItem } from "../../store/ItemsCollection/reducer";
+  ShoppingBasketImageWrapper,
+} from './styled';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import ShoppingBasketSharpIcon from '@mui/icons-material/ShoppingBasketSharp';
+import { useDispatch } from 'react-redux';
+import { deleteItem } from '../../store/ItemsCollection/reducer';
 
 function Card({ edited, id, price, title, description, collection }) {
   const dispatch = useDispatch();
 
-  function deleteCollectionItem() {
-    dispatch(deleteItem({ id }));
+  function deleteCollectionItem(propId) {
+    dispatch(deleteItem(propId));
   }
   return (
-    <CardWrapper>
+    <CardWrapper data-testid="card-component">
       {!edited && (
-        <IconBar>
+        <IconBar role="menubar">
           <Link to={`/item/change/${id}`}>
             <ModeEditIcon sx={{ fontSize: 25 }} />
           </Link>
           <DeleteForeverIcon
-            onClick={deleteCollectionItem}
-            sx={{ fontSize: 25, color: "white", cursor: "pointer" }}
+            onClick={() => deleteCollectionItem({ id })}
+            sx={{ fontSize: 25, color: 'white', cursor: 'pointer' }}
+            data-testid="delete-item__icon"
           />
         </IconBar>
       )}
-      <CardImage edited={edited}></CardImage>
+      <CardImage price={price} edited={edited}>
+        {!edited && (
+          <ShoppingBasketImageWrapper>
+            <ShoppingBasketSharpIcon
+              sx={{
+                display: 'none',
+                fontSize: 25,
+                color: 'white',
+                cursor: 'pointer',
+              }}
+            />
+          </ShoppingBasketImageWrapper>
+        )}
+      </CardImage>
 
       <CardInfoWrapper>
         <MainCardInfo>
           <CardTitle>{title}</CardTitle>
-          <CardPrice>{price ? `$${price}` : "Not For Sale"}</CardPrice>
+          <CardPrice>{price ? `$${price}` : 'Not For Sale'}</CardPrice>
         </MainCardInfo>
         {collection && (
           <CollectionName>Collection: {collection}</CollectionName>

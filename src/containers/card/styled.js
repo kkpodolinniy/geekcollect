@@ -15,12 +15,18 @@ const CardImage = styled.div`
   background-position: center;
   background-size: contain;
 
+  & div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
   ${(props) =>
-    props.edited &&
+    props.price &&
     css`
-      &:hover {
-        webkit-filter: blur(2px); /* Chrome, Safari, Opera */
-        filter: blur(2px);
+      &:hover > div > svg {
+        display: block;
       }
     `}
 `;
@@ -77,6 +83,10 @@ const CollectionName = styled.p`
   font-size: 18px;
   font-weight: 700;
 `;
+const ShoppingBasketImageWrapper = styled.div`
+  height: 100%;
+  width: 100%;
+`;
 export {
   CardWrapper,
   CardImage,
@@ -88,4 +98,5 @@ export {
   CardTitle,
   IconBar,
   CollectionName,
+  ShoppingBasketImageWrapper,
 };

@@ -7,6 +7,7 @@ import Collection from "./pages/Collection/index";
 import Explore from "./pages/Explore";
 import MainLayout from "./layouts/MainLayout";
 import ChangeItem from "./pages/ChangeItem/ChangeItem";
+import Checkout from "./pages/Checkout";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/add" element={<AddItem />} />
         <Route path="/item/change/:id" element={<ChangeItem />} />
         <Route path="/explore" element={<Explore />} />
+        <Route path="/checkout/:id" element={<Checkout />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

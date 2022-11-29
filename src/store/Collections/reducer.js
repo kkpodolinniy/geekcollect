@@ -1,12 +1,12 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { baseUrl } from "../../constants/api";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { baseUrl } from '../../constants/api';
 const createOption = (label) => ({
   label,
-  value: label.toLowerCase().replace(/\W/g, ""),
+  value: label.toLowerCase().replace(/\W/g, ''),
 });
 
 export const fetchCollections = createAsyncThunk(
-  "collections/fetchCollections",
+  'collections/fetchCollections',
   async function (_, { dispatch, rejectWithValue }) {
     const response = await fetch(`${baseUrl}/collections`);
     const data = await response.json();
@@ -15,13 +15,12 @@ export const fetchCollections = createAsyncThunk(
 );
 
 export const addCollectionToAPI = createAsyncThunk(
-  "collections/addCollectionToAPI",
+  'collections/addCollectionToAPI',
   async function (item, { dispatch, rejectWithValue }) {
-    console.log(item);
     const preparedOption = createOption(item);
     const response = await fetch(`${baseUrl}/collections`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(preparedOption),
     });
     const data = await response.json();
@@ -31,7 +30,7 @@ export const addCollectionToAPI = createAsyncThunk(
 );
 
 const collectionSlice = createSlice({
-  name: "collections",
+  name: 'collections',
   initialState: {
     allCollections: [],
     collectionDetail: null,
