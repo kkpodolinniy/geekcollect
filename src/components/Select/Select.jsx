@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import CreatableSelect from "react-select/creatable";
+import React, { useState } from 'react';
+import CreatableSelect from 'react-select/creatable';
 function Select({
   changeExistedCollections,
   addNewCollection,
